@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  cache1:
+    build: .
+    ports:
+      - "9527:5000"
+
+  cache2:
+    build: .
+    ports:
+      - "9528:5000"
+
+  cache3:
+    build: .
+    ports:
+      - "9529:5000"
