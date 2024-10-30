@@ -1,0 +1,1 @@
+/usr/bin/c++     CMakeFiles/server.dir/src/app/server_main.cc.o CMakeFiles/server.dir/src/app/cache_service.cc.o CMakeFiles/server.dir/src/proto/cache.pb.cc.o CMakeFiles/server.dir/src/proto/cache.grpc.pb.cc.o  -o server   -L/usr/local/lib  -Wl,-rpath,/usr/local/lib -lprotobuf -lgrpc++ -lgrpc -lpthread 

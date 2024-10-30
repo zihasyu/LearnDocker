@@ -34,3 +34,4 @@ grpc::Status SDCSImpl::RPCAddNextServer(grpc::ServerContext *context, const Flag
   response->set_flag(1);
   return grpc::Status::OK;
 }
+
