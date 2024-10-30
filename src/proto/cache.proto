@@ -1,6 +1,5 @@
 syntax = "proto3";
 
-
 service SDCS {
   // Sends a greeting
   rpc RPCGet(Key) returns (Value) {}
@@ -13,16 +12,17 @@ service SDCS {
 }
 
 message Key {
-  optional string key = 1;
+  string key = 1;
 }
 
 message Value {
-  optional string value = 1;
+  string value = 1;
 }
 
 message Flag {
   int32 flag = 1;
 }
+
 message Pair {
   string key = 1;
   string value = 2;

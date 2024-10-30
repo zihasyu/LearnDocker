@@ -1,0 +1,15 @@
+sudo apt install -y golang-github-grpc-ecosystem-go-grpc-prometheus-dev
+sudo apt install -y golang-github-grpc-ecosystem-grpc-gateway-dev
+sudo apt install -y golang-google-grpc-dev
+sudo apt install -y golang-grpc-gateway
+sudo apt install -y libgrpc++-dev
+sudo apt install -y libgrpc++1
+sudo apt install -y libgrpc-dev
+sudo apt install -y libgrpc6
+sudo apt install -y libyangrpc-dev
+sudo apt install -y libyangrpc2
+sudo apt install -y protobuf-compiler-grpc
+sudo apt install -y python3-grpc-tools
+sudo apt install -y python3-grpcio
+sudo apt install -y ruby-grpc-tools
+sudo apt install -y ruby-grpc
