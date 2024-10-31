@@ -1,1 +1,0 @@
-/usr/bin/c++     CMakeFiles/client.dir/src/app/client_main.cc.o CMakeFiles/client.dir/src/proto/cache.pb.cc.o CMakeFiles/client.dir/src/proto/cache.grpc.pb.cc.o  -o client   -L/usr/local/lib  -Wl,-rpath,/usr/local/lib -lprotobuf -lgrpc++ -lgrpc -lpthread 
