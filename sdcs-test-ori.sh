@@ -21,7 +21,7 @@ which jq >/dev/null 2>&1 || {
 
 PORT_BASE=9526
 HOST_BASE=127.0.0.1
-MAX_ITER=50
+MAX_ITER=500
 DELETED_KEYS=()
 _DELETED_KEYS_GENERATED=0
 
@@ -30,7 +30,7 @@ FAIL_PROMPT="\e[1;31mFAIL\e[0m"
 
 function get_cs() {
 	port=$(($PORT_BASE + $(shuf -i 1-$cs_num -n 1)))
-	echo http://$HOST_BASE:$port
+	echo http://$HOST_BASE:$port/
 }
 
 function get_key() {
@@ -100,64 +100,44 @@ function query_key() {
 }
 
 function test_set() {
-    local i=1
+	local i=1
 
-    while [[ $i -le $MAX_ITER ]]; do
-        local key="key-$i"
-        local value="value $i"
-        local url=$(get_cs)
-        echo "Setting key-value pair: $key=$value at $url"
-        status_code=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "Content-Type: application/x-www-form-urlencoded" -d "key=$key&value=$value" $url)
-        echo "Status code: $status_code"
-        if [[ $status_code -ne 200 ]]; then
-            echo "Error: expect status code 200 but got $status_code"
-            return 1
-        fi
-        ((i++))
-    done
-    echo "All set requests passed."
+	while [[ $i -le $MAX_ITER ]]; do
+		status_code=$(curl -s -o /dev/null -w "%{http_code}" -XPOST -H "Content-type: application/json" -d "$(gen_json_with_idx $i)" $(get_cs))
+		if [[ $status_code -ne 200 ]]; then
+			echo "Error: expect status code 200 but got $status_code"
+			return 1
+		fi
+		((i++))
+	done
 }
 
 function test_get() {
-    local count=$((MAX_ITER / 10 * 3))
-    local i=0
+	local count=$((MAX_ITER / 10 * 3))
+	local i=0
 
-    while [[ $i -lt $count ]]; do
-        local key=$(get_key)
-        local url=$(get_cs)/$key
-        echo "Getting key: $key at $url"
-        status_code=$(curl -s -o /dev/null -w "%{http_code}" $url)
-        echo "Status code: $status_code"
-        if [[ $status_code -ne 200 ]]; then
-            echo "Error: expect status code 200 but got $status_code"
-            return 1
-        fi
-        ((i++))
-    done
-    echo "All get requests passed."
+	while [[ $i -lt $count ]]; do
+		query_key $(get_key) 1 || return 1
+		((i++))
+	done
 }
-
-
 
 function test_delete() {
-    gen_deleted_keys
-    local i=0
-
-    while [[ $i -lt ${#DELETED_KEYS[@]} ]]; do
-        local key=${DELETED_KEYS[$i]}
-        local url=$(get_cs)/$key
-        echo "Deleting key: $key at $url"
-        status_code=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE $url)
-        echo "Status code: $status_code"
-        if [[ $status_code -ne 200 ]]; then
-            echo "Error: expect status code 200 but got $status_code"
-            return 1
-        fi
-        ((i++))
-    done
-    echo "All delete requests passed."
+	gen_deleted_keys
+	for key in "${DELETED_KEYS[@]}"; do
+		local response=$(curl -XDELETE -s -w "\n%{http_code}" $(get_cs)/$key)
+		# `head -n 1` works for delete actually. let's use sed for consistency.
+		local result=$(echo "$response" | sed '$d')
+		local status_code=$(echo "$response" | tail -n 1)
+		local expect=1
+		if [[ $status_code -ne 200 ]] || [[ "$result" != "$expect" ]]; then
+			echo -e "Error:\tInvalid response"
+			echo -e "\texpect: $status_code $expect"
+			echo -e "\tgot: $status_code $result"
+			return 1
+		fi
+	done
 }
-
 
 # need to check all keys to guarantee only appointed keys are removed.
 function test_get_after_delete() {

@@ -17,6 +17,7 @@ link_directories(/usr/lib /usr/local/lib)
 include_directories(${Protobuf_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/proto)
+include_directories(/usr/include/nlohmann)
 
 # 源文件列表
 set(SERVER_SOURCES
@@ -37,5 +38,5 @@ add_executable(server ${SERVER_SOURCES})
 add_executable(client ${CLIENT_SOURCES})
 
 # 链接库
-target_link_libraries(server protobuf grpc++ grpc pthread)
-target_link_libraries(client protobuf grpc++ grpc pthread)
+target_link_libraries(server protobuf grpc++ grpc pthread )
+target_link_libraries(client protobuf grpc++ grpc pthread )

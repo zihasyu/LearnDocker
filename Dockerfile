@@ -39,7 +39,7 @@ RUN apt install -y libyangrpc-dev
 RUN apt install -y libyangrpc2
 RUN apt install -y protobuf-compiler-grpc
 RUN apt install -y dos2unix
-
+RUN apt-get install -y nlohmann-json3-dev
 # 清理
 # RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
