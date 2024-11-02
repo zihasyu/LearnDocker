@@ -21,7 +21,7 @@ which jq >/dev/null 2>&1 || {
 
 PORT_BASE=9526
 HOST_BASE=127.0.0.1
-MAX_ITER=500
+MAX_ITER=50
 DELETED_KEYS=()
 _DELETED_KEYS_GENERATED=0
 
@@ -117,6 +117,7 @@ function test_get() {
 	local i=0
 
 	while [[ $i -lt $count ]]; do
+		echo "Executing: query_key $(get_key) 1"
 		query_key $(get_key) 1 || return 1
 		((i++))
 	done

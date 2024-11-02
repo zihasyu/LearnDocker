@@ -13,7 +13,7 @@
 #include <cstdlib>
 
 using json = nlohmann::json;
-std::mutex cache_mutex;
+// std::mutex cache_mutex;
 SDCSImpl service;
 int HTTP_PORT = 5000;
 int GRPC_PORT = 50050;
@@ -60,7 +60,7 @@ void RunHealthCheckServer() {
             for (auto& [key, value] : j.items()) {
                 int server_index = GetServerIndex(key);
                 if (server_index == SERVER_INDEX) {
-                    std::lock_guard<std::mutex> lock(cache_mutex);
+                    // std::lock_guard<std::mutex> lock(cache_mutex);
                     service.cache_[key] = value;
                     std::cout<<"flag1 "<<key<<":"<<value<<std::endl;
                 } else {
@@ -79,7 +79,7 @@ void RunHealthCheckServer() {
         auto key = req.matches[1].str();
         int server_index = GetServerIndex(key);
         if (server_index == SERVER_INDEX) {
-            std::lock_guard<std::mutex> lock(cache_mutex);
+            // std::lock_guard<std::mutex> lock(cache_mutex);
 
             // std::cout<<key<<std::endl;
             // for(auto& [key, value]:cache){
@@ -126,7 +126,7 @@ void RunHealthCheckServer() {
         auto key = req.matches[1].str();
         int server_index = GetServerIndex(key);
         if (server_index == SERVER_INDEX) {
-            std::lock_guard<std::mutex> lock(cache_mutex);
+            // std::lock_guard<std::mutex> lock(cache_mutex);
             if (service.cache_.erase(key)) {
                 res.set_content("1", "text/plain");
             } else {
