@@ -118,6 +118,25 @@ function test_set() {
     echo "All set requests passed."
 }
 
+# function test_get() {
+#     local count=$((MAX_ITER / 10 * 3))
+#     local i=0
+
+#     while [[ $i -lt $count ]]; do
+#         local key=$(get_key)
+#         local url=$(get_cs)/$key
+#         echo "Getting key: $key at $url"
+#         status_code=$(curl -s -o /dev/null -w "%{http_code}" $url)
+#         echo "Status code: $status_code"
+#         if [[ $status_code -ne 200 ]]; then
+#             echo "Error: expect status code 200 but got $status_code"
+#             return 1
+#         fi
+#         ((i++))
+#     done
+#     echo "All get requests passed."
+# }
+
 function test_get() {
     local count=$((MAX_ITER / 10 * 3))
     local i=0
@@ -126,18 +145,31 @@ function test_get() {
         local key=$(get_key)
         local url=$(get_cs)/$key
         echo "Getting key: $key at $url"
-        status_code=$(curl -s -o /dev/null -w "%{http_code}" $url)
+
+        # 获取响应内容和状态码
+        response=$(curl -s -w "%{http_code}" -o response_body.txt $url)
+        status_code=$(tail -n1 <<< "$response")
+        response_body=$(<response_body.txt)
+
         echo "Status code: $status_code"
+        echo "Response body: $response_body"
+
         if [[ $status_code -ne 200 ]]; then
             echo "Error: expect status code 200 but got $status_code"
             return 1
         fi
+
+        # 检查响应内容是否包含预期的值
+        expected_value="value ${key#*-}"
+        if [[ "$response_body" != "$expected_value" ]]; then
+            echo "Error: expected response to contain value $expected_value but got $response_body"
+            return 1
+        fi
+
         ((i++))
     done
     echo "All get requests passed."
 }
-
-
 
 function test_delete() {
     gen_deleted_keys

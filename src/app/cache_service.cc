@@ -30,3 +30,7 @@ grpc::Status SDCSImpl::RPCAddNextServer(grpc::ServerContext* context, const Flag
     response->set_flag(1);
     return grpc::Status::OK;
 }
+//curl -XDELETE http://127.0.0.1:9527/myname
+//curl http://127.0.0.1:9527/myname
+//curl -XPOST -H "Content-type: application/json" http://127.0.0.1:9527/ -d '{"myname": "电子科技大学@2024"}'
+

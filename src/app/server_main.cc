@@ -7,7 +7,9 @@
 #include <httplib.h>
 #include <unordered_map>
 #include <mutex>
+#include <nlohmann/json.hpp>
 
+using json = nlohmann::json;
 std::unordered_map<std::string, std::string> cache;
 std::mutex cache_mutex;
 void RunHealthCheckServer() {
@@ -19,46 +21,41 @@ void RunHealthCheckServer() {
     });
 
     svr.Post("/", [](const httplib::Request& req, httplib::Response& res) {
-        auto key = req.get_param_value("key");
-        auto value = req.get_param_value("value");
-        {
-            std::lock_guard<std::mutex> lock(cache_mutex);
-            cache[key] = value;
+        try {
+            auto j = json::parse(req.body);
+            for (auto& [key, value] : j.items()) {
+                std::lock_guard<std::mutex> lock(cache_mutex);
+                cache[key] = value;
+            }
+            res.set_content("OK", "text/plain");
+            res.status = 200;
+        } catch (const json::parse_error& e) {
+            res.set_content("Invalid JSON", "text/plain");
+            res.status = 400;
         }
-        res.set_content("OK", "text/plain");
-        res.status = 200;
     });
 
     svr.Get(R"(/(.*))", [](const httplib::Request& req, httplib::Response& res) {
         auto key = req.matches[1].str();
-        std::string value;
-        {
-            std::lock_guard<std::mutex> lock(cache_mutex);
-            auto it = cache.find(key);
-            if (it != cache.end()) {
-                value = it->second;
-            }
-        }
-        if (!value.empty()) {
-            res.set_content(value, "text/plain");
+        std::lock_guard<std::mutex> lock(cache_mutex);
+        if (cache.find(key) != cache.end()) {
+            json j = { { key, cache[key] } };
+            res.set_content(j.dump(), "application/json");
             res.status = 200;
         } else {
+            res.set_content("Key not found", "text/plain");
             res.status = 404;
         }
     });
 
     svr.Delete(R"(/(.*))", [](const httplib::Request& req, httplib::Response& res) {
         auto key = req.matches[1].str();
-        int deleted = 0;
-        {
-            std::lock_guard<std::mutex> lock(cache_mutex);
-            auto it = cache.find(key);
-            if (it != cache.end()) {
-                cache.erase(it);
-                deleted = 1;
-            }
+        std::lock_guard<std::mutex> lock(cache_mutex);
+        if (cache.erase(key)) {
+            res.set_content("1", "text/plain");
+        } else {
+            res.set_content("0", "text/plain");
         }
-        res.set_content(std::to_string(deleted), "text/plain");
         res.status = 200;
     });
 
