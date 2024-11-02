@@ -4,14 +4,20 @@ services:
   cache-server-1:
     image: cache-server
     ports:
-      - "9527:5000"  # 将容器的5000端口映射到主机的9527端口
+      - "9527:5000"  # 将容器的5000端口映射到主机的9527端口 (HTTP)
+    environment:
+      - SERVER_INDEX=0
 
   cache-server-2:
     image: cache-server
     ports:
-      - "9528:5000"  # 将容器的5000端口映射到主机的9528端口
+      - "9528:5000"  # 将容器的5000端口映射到主机的9528端口 (HTTP)
+    environment:
+      - SERVER_INDEX=1
 
   cache-server-3:
     image: cache-server
     ports:
-      - "9529:5000"  # 将容器的5000端口映射到主机的9529端口
+      - "9529:5000"  # 将容器的5000端口映射到主机的9529端口 (HTTP)
+    environment:
+      - SERVER_INDEX=2

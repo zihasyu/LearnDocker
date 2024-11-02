@@ -3,6 +3,7 @@
 grpc::Status SDCSImpl::RPCPost(grpc::ServerContext* context, const Pair* request, Flag* response) {
     std::lock_guard<std::mutex> lock(cache_mutex_);
     cache_[request->key()] = request->value();
+    std::cout<<"flag2 "<<request->key()<<":"<<request->value()<<std::endl;
     response->set_flag(1);
     return grpc::Status::OK;
 }
@@ -32,5 +33,13 @@ grpc::Status SDCSImpl::RPCAddNextServer(grpc::ServerContext* context, const Flag
 }
 //curl -XDELETE http://127.0.0.1:9527/myname
 //curl http://127.0.0.1:9527/myname
-//curl -XPOST -H "Content-type: application/json" http://127.0.0.1:9527/ -d '{"myname": "电子科技大学@2024"}'
+//curl -XPOST -H "Content-type: application/json" http://127.0.0.1:9527/ -d '{"myname": "2024"}'
 
+
+//curl -XDELETE http://127.0.0.1:9527/age
+//curl http://127.0.0.1:9527/age
+//curl -XPOST -H "Content-type: application/json" http://127.0.0.1:9527/ -d '{"age": 123}'
+
+//curl -XDELETE http://127.0.0.1:9527/age
+//curl http://127.0.0.1:9527/age
+//curl -XPOST -H "Content-type: application/json" http://127.0.0.1:9527/ -d '{"tasks": ["task 1", "task 2", "task 3"]}'

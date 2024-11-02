@@ -13,9 +13,8 @@ public:
   grpc::Status RPCPost(grpc::ServerContext *context, const Pair *request, Flag *response) override;
   grpc::Status RPCDelete(grpc::ServerContext *context, const Key *request, Flag *response) override;
   grpc::Status RPCAddNextServer(grpc::ServerContext *context, const Flag *request, Flag *response) override;
-
-private:
   std::unordered_map<std::string, std::string> cache_;
+private:
   std::mutex cache_mutex_;
 };
 
