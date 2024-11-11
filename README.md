@@ -1,3 +1,5 @@
+
+```shell
 # LearnDocker
 git clone https://github.com/zihasyu/LearnDocker.git
 cd LearnDocker
@@ -7,3 +9,4 @@ docker-compose up -d
 
 cd script
 ./sdcs-test.sh 3
+```
