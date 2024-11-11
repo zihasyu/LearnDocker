@@ -1,4 +1,9 @@
 # LearnDocker
-sudo apt install -y protobuf-compiler libprotobuf-dev libgrpc-dev grpc-tools
-sudo apt install protobuf-compiler-grpc
-sudo bash apt-grpc
+git clone https://github.com/zihasyu/LearnDocker.git
+cd LearnDocker
+# please open docker desktop yourself
+docker build -t cache-server .
+docker-compose up -d
+
+cd script
+./sdcs-test.sh 3
